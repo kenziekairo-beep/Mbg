@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank MBG - Next-Gen Virtual Account & Intelligent Transfer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            overflow-x: hidden;
+        }
+        .font-mono-code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .glass-card {
+            background: linear-gradient(135deg, #059669 0%, #0891b2 100%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.3);
+        }
+        /* Sembunyikan scrollbar tapi tetap bisa di-scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Animasi laser scanner */
+        @keyframes scan-laser {
+            0% { top: 0%; opacity: 0.8; }
+            50% { top: 100%; opacity: 1; }
+            100% { top: 0%; opacity: 0.8; }
+        }
+        .animate-laser {
+            animation: scan-laser 2.5s ease-in-out infinite;
+        }
+        /* Animasi titik melayang di latar belakang */
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(10deg); }
+        }
+        .animate-float {
+            animation: float-slow 8s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-0 md:p-6 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-50/50 via-slate-100 to-emerald-100/30">
+
+    <!-- Canvas Partikel Latar Belakang -->
+    <canvas id="bg-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-60"></canvas>
+
+    <!-- CONTAINER UTAMA FRAME SMARTPHONE -->
+    <div id="app" class="w-full max-w-md bg-white border border-slate-200/80 shadow-[0_15px_50px_rgba(0,0,0,0.06)] rounded-none md:rounded-[40px] relative min-h-screen md:min-h-[850px] flex flex-col overflow-hidden z-10">
+        
+        <!-- SECTION 1: LAYAR LOGIN -->
+        <div id="login-screen" class="flex-grow flex flex-col justify-between p-8 relative z-10">
+            <!-- Dekorasi Logo Atas -->
+            <div class="flex justify-center mt-12">
+                <div class="relative">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full blur opacity-30"></div>
+                    <div class="relative w-20 h-20 bg-white rounded-3xl flex items-center justify-center border border-slate-100 shadow-md">
+                        <span class="text-3xl font-black bg-gradient-to-r from-emerald-600 to-cyan-600 bg-clip-text text-transparent tracking-tighter">MBG</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center my-6">
+                <h1 class="text-3xl font-extrabold tracking-tight text-slate-900">BANK MBG</h1>
+                <p class="text-[10px] text-slate-500 mt-2 tracking-widest uppercase font-bold">Portal Kliring & Transaksi Virtual</p>
+                
+                <!-- Badge Persamaan Matematika Sandi -->
+                <div class="inline-block bg-emerald-50 border border-emerald-100 rounded-full px-3 py-1 mt-4 text-[10px] text-emerald-700 font-mono-code font-bold">
+                    Terenkripsi Keamanan Tinggi ($E = mc^2$)
+                </div>
+            </div>
+
+            <!-- Panel Login Transparan Cerah -->
+            <div class="glass-panel rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] space-y-6">
+                <div class="space-y-1 text-center">
+                    <h3 class="text-sm font-bold text-slate-800">Selamat Datang Kembali</h3>
+                    <p class="text-xs text-slate-500">Silakan masuk menggunakan Akun Google Anda untuk mengakses Virtual Account.</p>
+                </div>
+
+                <!-- Tombol Login Google Premium -->
+                <button id="btn-google-login" class="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-semibold py-3 px-4 rounded-2xl transition duration-300 active:scale-[0.98] shadow-sm group">
+                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                    </svg>
+                    <span class="text-xs font-bold text-slate-800">Masuk dengan Akun Google</span>
+                </button>
+            </div>
+
+            <div class="text-center text-[10px] text-slate-400">
+                Layanan Perbankan Berlisensi &copy; 2026 Bank MBG Inc.
+            </div>
+        </div>
+
+        <!-- SECTION 2: MODAL SIMULATOR GOOGLE AUTH -->
+        <div id="google-auth-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center p-4">
+            <div class="bg-white w-full max-w-xs rounded-3xl p-6 border border-slate-100 shadow-2xl space-y-6">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <span class="text-xs font-bold text-slate-500 tracking-wider">Otorisasi Akun Google</span>
+                    <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+                
+                <div id="auth-email-step" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Nama Lengkap Anda</label>
+                        <input id="auth-name" type="text" value="Rian Sanjaya" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Alamat Email Gmail</label>
+                        <input id="auth-email" type="email" value="rian.sanjaya@gmail.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                    </div>
+                    <button id="btn-submit-auth" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-white font-extrabold py-3 rounded-xl text-xs transition duration-300 shadow-md">
+                        Izinkan Akses Layanan
+                    </button>
+                </div>
+
+                <div id="auth-loading-step" class="hidden flex flex-col items-center justify-center py-6 space-y-3">
+                    <div class="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                    <span class="text-xs text-slate-600">Menghubungkan Token Google...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- HEADER APLIKASI (SETELAH MASUK) -->
+        <header id="app-header" class="hidden sticky top-0 bg-white/90 backdrop-blur-md border-b border-slate-100 p-4 flex items-center justify-between z-30">
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl blur opacity-25"></div>
+                    <div class="relative w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center font-extrabold text-xs text-emerald-600 border border-slate-200 shadow-sm">
+                        MBG
+                    </div>
+                </div>
+                <div>
+                    <span class="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">Nasabah</span>
+                    <h3 id="user-display-name" class="text-xs font-extrabold text-slate-800 leading-tight">Rian Sanjaya</h3>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <!-- Tombol Chat Asisten AI Financial -->
+                <button id="btn-toggle-ai" class="relative p-2 rounded-xl bg-slate-50 border border-slate-200 text-cyan-600 hover:bg-slate-100 transition">
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-pink-500 rounded-full animate-ping"></span>
+                    <i data-lucide="bot" class="w-4 h-4"></i>
+                </button>
+                <!-- Tombol Logout -->
+                <button id="btn-logout" class="p-2 text-slate-400 hover:text-rose-500 bg-slate-50 border border-slate-200 rounded-xl transition">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- KONTEN DASHBOARD UTAMA -->
+        <main id="main-content" class="hidden flex-grow px-4 py-4 space-y-5 overflow-y-auto no-scrollbar pb-24">
+
+            <!-- KARTU DEBIT ELEKTRONIK 3D (DESAIN CERAH EMERALD LUXURY) -->
+            <div id="debit-card" class="relative h-48 rounded-[28px] overflow-hidden p-5 shadow-lg border border-white/40 group cursor-pointer glass-card">
+                <!-- Dekorasi kisi geometris tipis -->
+                <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:16px_16px]"></div>
+                
+                <div class="relative z-10 h-full flex flex-col justify-between">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-[10px] uppercase font-extrabold tracking-widest text-emerald-200">MBG Platinum Virtual</span>
+                            <div class="flex items-center gap-1.5 mt-1">
+                                <span id="va-number" class="text-sm font-mono-code font-bold tracking-widest text-white">8891 0812 3456 7890</span>
+                                <button onclick="copyVA()" class="p-1 text-emerald-100 hover:text-white transition">
+                                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center border border-white/20">
+                            <i data-lucide="cpu" class="w-5 h-5 text-emerald-100"></i>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-[10px] text-emerald-100/80 block tracking-wide font-medium">Saldo Terintegrasi (IDR)</span>
+                        <h1 id="user-balance" class="text-2xl font-extrabold text-white mt-0.5 tracking-tight">Rp 1.500.000</h1>
+                    </div>
+
+                    <div class="flex justify-between items-end">
+                        <div class="text-[9px] text-emerald-200 font-bold tracking-widest">
+                            BI-FAST Jaringan Kliring
+                        </div>
+                        <span class="text-[10px] font-black tracking-wider text-white">BANK MBG</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANALIKTIK PENGELUARAN BULANAN (UI CERAH) -->
+            <div class="bg-slate-50 rounded-3xl p-4 border border-slate-100 flex items-center justify-between">
+                <div class="space-y-1">
+                    <span class="text-[10px] text-slate-500 uppercase tracking-widest block font-bold">Total Pengeluaran Bulan Ini</span>
+                    <span class="text-xs text-rose-600 font-extrabold">- Rp 150.000</span>
+                </div>
+                <!-- Grafik batang mikro -->
+                <div class="flex items-end gap-1 h-8">
+                    <div class="w-1.5 bg-slate-200 rounded-full h-3"></div>
+                    <div class="w-1.5 bg-slate-300 rounded-full h-5"></div>
+                    <div class="w-1.5 bg-slate-200 rounded-full h-4"></div>
+                    <div class="w-1.5 bg-emerald-300 rounded-full h-6"></div>
+                    <div class="w-1.5 bg-emerald-500 rounded-full h-8"></div>
+                </div>
+            </div>
+
+            <!-- GRID LAYANAN CEPAT -->
+            <div class="grid grid-cols-2 gap-3.5">
+                <!-- Tombol: Transfer -->
+                <button id="action-transfer" class="bg-white p-4 rounded-3xl border border-slate-100 shadow-[0_4px_15px_rgba(0,0,0,0.01)] hover:border-emerald-500/30 transition duration-300 group text-left relative overflow-hidden">
+                    <div class="absolute -right-3 -top-3 w-12 h-12 bg-emerald-500/5 rounded-full blur-lg group-hover:bg-emerald-500/10 transition"></div>
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                        <i data-lucide="send-to-back" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="text-xs font-bold text-slate-800">Kirim Dana</h4>
+                    <p class="text-[9px] text-slate-400 mt-0.5 leading-snug">Ke Bank Indonesia & Dompet Digital</p>
+                </button>
+
+                <!-- Tombol: Top Up -->
+                <button id="action-topup" class="bg-white p-4 rounded-3xl border border-slate-100 shadow-[0_4px_15px_rgba(0,0,0,0.01)] hover:border-cyan-500/30 transition duration-300 group text-left relative overflow-hidden">
+                    <div class="absolute -right-3 -top-3 w-12 h-12 bg-cyan-500/5 rounded-full blur-lg group-hover:bg-cyan-500/10 transition"></div>
+                    <div class="w-10 h-10 rounded-2xl bg-cyan-500/10 text-cyan-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                        <i data-lucide="smile" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="text-xs font-bold text-slate-800">Isi Saldo</h4>
+                    <p class="text-[9px] text-emerald-600 font-extrabold mt-0.5 uppercase tracking-wider">Pindai Senyuman</p>
+                </button>
+            </div>
+
+            <!-- DAFTAR HISTORI TRANSAKSI -->
+            <div class="space-y-3">
+                <div class="flex justify-between items-center px-1">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Aktivitas Rekening</h3>
+                    <div class="relative w-28">
+                        <input id="tx-search" type="text" placeholder="Cari..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-6 pr-2 py-1 text-[10px] text-slate-600 focus:outline-none focus:border-emerald-500">
+                        <i data-lucide="search" class="w-3 h-3 text-slate-400 absolute left-2 top-2"></i>
+                    </div>
+                </div>
+                
+                <div id="transaction-list" class="space-y-2.5 max-h-[220px] overflow-y-auto no-scrollbar pr-1">
+                    <!-- Transaksi akan dibuat secara dinamis oleh JavaScript -->
+                </div>
+            </div>
+
+        </main>
+
+        <!-- SECTION 3: PANEL TRANSFER (DENGAN INTEGRASI CEK REKENING AI GEMINI) -->
+        <div id="transfer-panel" class="hidden absolute inset-0 bg-white z-40 flex flex-col justify-between">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <button id="btn-back-transfer" class="p-2 text-slate-400 hover:text-slate-800">
+                    <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                </button>
+                <h2 class="text-xs font-bold uppercase tracking-widest text-slate-500">Kliring Transfer Pintar</h2>
+                <div class="w-9"></div>
+            </div>
+
+            <div class="flex-grow overflow-y-auto p-6 space-y-4 no-scrollbar">
+                
+                <!-- Pilihan Bank / E-Wallet Tujuan -->
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Lembaga Keuangan Penerima</label>
+                    <select id="transfer-destination" class="w-full bg-slate-50 border border-slate-250 rounded-xl px-4 py-3 text-slate-800 text-xs font-semibold focus:outline-none focus:border-emerald-500">
+                        <optgroup label="Bank Nasional Terdaftar">
+                            <option value="BCA">Bank Central Asia (BCA)</option>
+                            <option value="Mandiri">Bank Mandiri</option>
+                            <option value="BNI">Bank Negara Indonesia (BNI)</option>
+                            <option value="BRI">Bank Rakyat Indonesia (BRI)</option>
+                            <option value="MBG">Bank MBG (Sesama)</option>
+                        </optgroup>
+                        <optgroup label="Dompet Digital Resmi">
+                            <option value="GoPay">GoPay Indonesia</option>
+                            <option value="OVO">OVO Cash</option>
+                            <option value="DANA">DANA Dompet Digital</option>
+                            <option value="LinkAja">LinkAja</option>
+                            <option value="ShopeePay">ShopeePay</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Nomor Rekening + Tombol Cek Rekening AI -->
+                <div class="space-y-2">
+                    <label id="label-account-number" class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Nomor Rekening Tujuan</label>
+                    <div class="relative">
+                        <input id="transfer-account" type="number" placeholder="Contoh: 1290382910" class="w-full bg-slate-50 border border-slate-250 rounded-xl pl-4 pr-24 py-3 text-slate-800 font-mono-code text-xs focus:outline-none focus:border-emerald-500">
+                        
+                        <!-- Tombol Pemicu API Gemini -->
+                        <button id="btn-verify-account" class="absolute right-2 top-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-3 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition border border-emerald-200">
+                            Cek Akun
+                        </button>
+                    </div>
+                    
+                    <!-- Lencana Otorisasi Penerima Real-Time -->
+                    <div id="verification-status" class="hidden flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></div>
+                        <span id="verified-name" class="text-[10px] font-bold text-slate-700"></span>
+                    </div>
+                </div>
+
+                <!-- Input Nominal Transfer & Pintasan -->
+                <div class="space-y-2">
+                    <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400">Nominal Transfer (IDR)</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-3 text-slate-400 font-bold text-xs">Rp</span>
+                        <input id="transfer-amount" type="number" placeholder="0" class="w-full bg-slate-50 border border-slate-250 rounded-xl pl-10 pr-4 py-3 text-slate-800 font-bold text-xs focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div class="grid grid-cols-4 gap-1.5 pt-1">
+                        <button onclick="setTransferAmount(50000)" class="py-1.5 bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-500 rounded-lg text-[9px] font-mono-code">50k</button>
+                        <button onclick="setTransferAmount(100000)" class="py-1.5 bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-500 rounded-lg text-[9px] font-mono-code">100k</button>
+                        <button onclick="setTransferAmount(500000)" class="py-1.5 bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-500 rounded-lg text-[9px] font-mono-code">500k</button>
+                        <button onclick="setTransferAmount(1000000)" class="py-1.5 bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-500 rounded-lg text-[9px] font-mono-code">1M</button>
+                    </div>
+                </div>
+
+                <!-- Berita Catatan -->
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Pesan Berita Acara</label>
+                    <input id="transfer-notes" type="text" placeholder="Catatan transaksi opsional..." class="w-full bg-slate-50 border border-slate-250 rounded-xl px-4 py-3 text-slate-800 text-xs focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <!-- Metode Rute Transaksi -->
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Metode Rute Layanan</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 border border-emerald-500/20 rounded-xl cursor-pointer">
+                            <input type="radio" name="routing-type" value="BIFast" checked class="accent-emerald-600">
+                            <div class="text-left">
+                                <span class="text-[10px] font-bold text-slate-800 block">BI-FAST</span>
+                                <span class="text-[8px] text-slate-500 block">Biaya Admin Rp 0</span>
+                            </div>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer">
+                            <input type="radio" name="routing-type" value="Realtime" class="accent-emerald-600">
+                            <div class="text-left">
+                                <span class="text-[10px] font-bold text-slate-800 block">Online</span>
+                                <span class="text-[8px] text-slate-500 block">Biaya Admin Rp 0</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer Otorisasi Transaksi -->
+            <div class="p-6 border-t border-slate-100 bg-slate-50 space-y-3">
+                <div class="flex items-center justify-center gap-1.5 text-slate-400 text-[9px] uppercase tracking-widest font-bold">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
+                    BI-FAST Secure Layer Verified
+                </div>
+                <button id="btn-process-transfer" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-white font-extrabold py-3.5 rounded-xl text-xs transition duration-300 transform active:scale-95 shadow-md">
+                    Otorisasi & Kirim Dana Sekarang
+                </button>
+            </div>
+        </div>
+
+        <!-- SECTION 4: PANEL TOP UP (DENGAN SIMULATOR DETEKSI SENYUMAN) -->
+        <div id="topup-panel" class="hidden absolute inset-0 bg-white z-40 flex flex-col justify-between">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <button id="btn-back-topup" class="p-2 text-slate-400 hover:text-slate-800">
+                    <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                </button>
+                <h2 class="text-xs font-bold uppercase tracking-widest text-slate-500">Pencitraan Sensor Senyum</h2>
+                <div class="w-9"></div>
+            </div>
+
+            <div class="flex-grow flex flex-col items-center justify-center p-6 space-y-6 relative overflow-hidden">
+                
+                <!-- Terminal Log Koding Interaktif (Tetap gelap agar tulisan koding terlihat kontras dan canggih) -->
+                <div id="terminal-overlay" class="hidden absolute inset-0 bg-slate-950/95 z-50 p-4 font-mono-code text-[10px] text-emerald-400 overflow-y-auto space-y-1 select-none">
+                    <!-- Kode log dinamis dimunculkan disini -->
+                </div>
+
+                <div class="text-center space-y-2">
+                    <span class="bg-cyan-500/10 text-cyan-700 text-[10px] font-bold px-3 py-1.5 rounded-full border border-cyan-500/20 uppercase tracking-widest">
+                        FREE Smile Top-Up
+                    </span>
+                    <h3 class="text-sm font-bold text-slate-800">Deteksi Biometrik Ekspresi</h3>
+                    <p class="text-[10px] text-slate-500 max-w-xs">Tersenyumlah selebar mungkin di depan kamera. Kecerdasan Buatan Bank MBG akan mengonversi kebahagiaan Anda menjadi saldo!</p>
+                </div>
+
+                <!-- Pemindai Biometrik Melingkar Modern -->
+                <div class="relative w-64 h-64 rounded-full border-4 border-emerald-500/30 p-2 overflow-hidden shadow-[0_10px_30px_rgba(16,185,129,0.1)] bg-slate-50 flex items-center justify-center">
+                    
+                    <video id="webcam-video" class="hidden absolute inset-0 w-full h-full object-cover scale-x-[-1] rounded-full"></video>
+
+                    <!-- Garis penunjuk berputar -->
+                    <div class="absolute inset-0 border border-dashed border-emerald-400/40 rounded-full animate-spin" style="animation-duration: 20s;"></div>
+
+                    <!-- Laser Garis Pindai -->
+                    <div id="scanner-laser" class="hidden absolute left-0 w-full h-1 bg-emerald-500 shadow-[0_0_12px_#10b981] animate-laser z-20"></div>
+
+                    <!-- Masker wajah simulasi -->
+                    <div id="face-placeholder" class="text-emerald-600 flex flex-col items-center justify-center text-center p-4 z-10 transition">
+                        <i data-lucide="smile" class="w-16 h-16 animate-bounce"></i>
+                        <span id="camera-status-text" class="text-[9px] text-slate-400 mt-3 uppercase tracking-wider font-semibold">Menghubungkan Sensor...</span>
+                    </div>
+                </div>
+
+                <!-- Pemilih Nominal Top Up -->
+                <div class="w-full max-w-xs">
+                    <label class="block text-center text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Tentukan Nominal Hadiah</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" class="btn-nominal p-2.5 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-bold active:scale-95 transition" data-amount="500000">Rp 500.000</button>
+                        <button type="button" class="btn-nominal p-2.5 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-bold active:scale-95 transition" data-amount="1000000">Rp 1.000.000</button>
+                        <button type="button" class="btn-nominal p-2.5 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-bold active:scale-95 transition" data-amount="5000000">Rp 5.000.000</button>
+                        <button type="button" class="btn-nominal p-2.5 bg-slate-50 border border-emerald-500/40 text-emerald-700 bg-emerald-50 rounded-xl text-xs font-bold active:scale-95 transition" data-amount="10000000">Rp 10.000.000</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pemicu Pemindaian -->
+            <div class="p-6 border-t border-slate-100 bg-slate-50 flex flex-col gap-2">
+                <button id="btn-start-scan" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-white font-extrabold py-3.5 rounded-xl text-xs transition duration-300 transform active:scale-95 shadow-md">
+                    Otorisasi & Ambil Citra Senyum
+                </button>
+                <span class="text-center text-[8px] text-slate-400 uppercase tracking-widest font-semibold">Sistem beralih ke simulasi visual jika kamera tidak tersedia</span>
+            </div>
+        </div>
+
+        <!-- SECTION 5: MODAL CHAT ASISTEN FINANSIAL AI MBG -->
+        <div id="ai-chat-panel" class="hidden absolute inset-0 bg-white z-40 flex flex-col justify-between">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-cyan-100 flex items-center justify-center text-cyan-600">
+                        <i data-lucide="bot" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-800 leading-none">Asisten Finansial AI MBG</h3>
+                        <span class="text-[8px] text-emerald-600 font-bold">Terhubung & Siap</span>
+                    </div>
+                </div>
+                <button id="btn-close-ai" class="p-2 text-slate-400 hover:text-slate-800"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+
+            <!-- Tempat Pesan Chat -->
+            <div id="ai-chat-history" class="flex-grow overflow-y-auto p-4 space-y-3 text-xs no-scrollbar bg-slate-50/50">
+                <div class="bg-white border border-slate-100 rounded-2xl p-3 max-w-[85%] self-start space-y-1 shadow-sm">
+                    <p class="text-slate-600">Halo! Saya **MBG AI-Assistant**. Anda dapat berkonsultasi seputar saldo, tips keuangan, analisis transaksi, atau menanyakan strategi investasi yang bijak.</p>
+                    <span class="text-[8px] text-slate-400 block text-right font-semibold">System</span>
+                </div>
+            </div>
+
+            <!-- Pintasan Pertanyaan Cepat -->
+            <div class="px-4 py-2 flex gap-1.5 overflow-x-auto no-scrollbar bg-slate-50 border-t border-slate-100">
+                <button onclick="askAI('Berapa saldo saya saat ini?')" class="flex-shrink-0 bg-white border border-slate-200 text-[10px] text-slate-600 px-3 py-1.5 rounded-full hover:border-slate-300 transition">Info Saldo</button>
+                <button onclick="askAI('Bagaimana tips menabung yang bijak?')" class="flex-shrink-0 bg-white border border-slate-200 text-[10px] text-slate-600 px-3 py-1.5 rounded-full hover:border-slate-300 transition">Tips Keuangan</button>
+                <button onclick="askAI('Apakah ada transaksi mencurigakan?')" class="flex-shrink-0 bg-white border border-slate-200 text-[10px] text-slate-600 px-3 py-1.5 rounded-full hover:border-slate-300 transition">Audit Transaksi</button>
+            </div>
+
+            <!-- Input Kolom Chat -->
+            <div class="p-3 border-t border-slate-100 bg-white flex items-center gap-2">
+                <input id="ai-user-input" type="text" placeholder="Tanyakan saran finansial..." class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 text-xs focus:outline-none focus:border-cyan-500">
+                <button id="btn-send-chat" class="w-10 h-10 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl flex items-center justify-center transition active:scale-95">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SECTION 6: STRUK STRIP BUKTI TRANSFER ELEKTRONIK -->
+        <div id="receipt-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+            <div class="bg-white border border-slate-100 w-full max-w-xs rounded-3xl overflow-hidden shadow-2xl relative flex flex-col max-h-[90vh]">
+                
+                <!-- Layout Cetak Struk (Clean White) -->
+                <div id="receipt-print-area" class="bg-white text-slate-800 p-6 flex-grow overflow-y-auto space-y-4 font-sans select-text">
+                    <!-- Logo & Nama Bank -->
+                    <div class="text-center border-b-2 border-dashed border-slate-200 pb-4">
+                        <div class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-slate-900 text-white font-extrabold text-sm mb-1">
+                            MBG
+                        </div>
+                        <h2 class="text-sm font-extrabold tracking-wider text-slate-900">BANK MBG</h2>
+                        <p class="text-[9px] text-emerald-600 uppercase font-extrabold tracking-widest mt-0.5">BI-FAST CLEARING SUCCESSFUL</p>
+                    </div>
+
+                    <!-- Baris Informasi Detail -->
+                    <div class="space-y-2.5 text-[11px]">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400 font-bold">No. Referensi</span>
+                            <span id="receipt-tx-id" class="font-mono-code font-bold text-slate-800">TX-20260621-12093</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400 font-bold">Waktu Transaksi</span>
+                            <span id="receipt-datetime" class="font-semibold text-slate-800">21 Jun 2026, 12:59</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400 font-bold">Sumber VA</span>
+                            <span id="receipt-source" class="font-mono-code font-bold text-slate-800">8891 0812 3456 7890</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400 font-bold">Nama Pengirim</span>
+                            <span id="receipt-sender-name" class="font-bold text-slate-800">Rian Sanjaya</span>
+                        </div>
+
+                        <hr class="border-slate-100">
+
+                        <div class="flex justify-between">
+                            <span class="text-slate-400 font-bold">Lembaga Tujuan</span>
+                            <span id="receipt-dest-bank" class="font-extrabold text-slate-900 uppercase">BANK BCA</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400 font-bold">No. Rekening / HP</span>
+                            <span id="receipt-dest-number" class="font-mono-code font-bold text-slate-800">1290382910</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400 font-bold">Catatan</span>
+                            <span id="receipt-notes" class="text-slate-500 italic">Transfer</span>
+                        </div>
+
+                        <hr class="border-slate-100">
+
+                        <div class="flex justify-between items-center py-1">
+                            <span class="text-slate-500 font-extrabold">Nominal Utama</span>
+                            <span id="receipt-amount" class="text-sm font-extrabold text-slate-900">Rp 0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400 font-bold">Biaya Layanan</span>
+                            <span class="text-xs font-bold text-emerald-600">Rp 0 (BI-FAST Bebas Biaya)</span>
+                        </div>
+
+                        <hr class="border-2 border-double border-slate-150">
+
+                        <!-- Footer Autentikator BI-FAST -->
+                        <div class="text-center pt-2 space-y-1.5 flex flex-col items-center">
+                            <span class="text-[8px] text-slate-400 uppercase tracking-widest font-bold">RESI KLIRING RESMI BANK INDONESIA</span>
+                            <!-- Barcode simulasi -->
+                            <div class="w-32 h-6 bg-slate-50 rounded border border-slate-150 flex items-center justify-between px-2 overflow-hidden">
+                                <span class="text-[6px] font-mono-code text-slate-400">M B G - C E R A H - 2 0 2 6</span>
+                                <div class="flex gap-0.5 items-end h-4">
+                                    <div class="w-[1px] bg-slate-400 h-full"></div>
+                                    <div class="w-[3px] bg-slate-400 h-full"></div>
+                                    <div class="w-[1px] bg-slate-400 h-3"></div>
+                                    <div class="w-[2px] bg-slate-400 h-full"></div>
+                                    <div class="w-[1px] bg-slate-400 h-full"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aksi Penutup Struk -->
+                <div class="p-4 border-t border-slate-100 bg-slate-50 flex gap-2">
+                    <button id="btn-share-receipt" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition">
+                        <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                        Bagikan Bukti
+                    </button>
+                    <button id="btn-close-receipt" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- NOTIFICATION TOAST -->
+        <div id="toast-notif" class="hidden fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-slate-900 px-4 py-3 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.15)] flex items-center gap-2.5 z-50 text-xs font-semibold text-slate-100 max-w-xs text-center">
+            <div class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></div>
+            <span id="toast-message">Notifikasi</span>
+        </div>
+
+        <!-- NAV BAR NAVIGASI BAWAH (PADA DESAIN DASHBOARD) -->
+        <nav id="bottom-nav" class="hidden absolute bottom-0 left-0 right-0 h-20 bg-white/90 backdrop-blur-md border-t border-slate-100 flex justify-around items-center px-4 z-30">
+            <!-- Item Nav: Utama -->
+            <button id="nav-home" class="flex flex-col items-center gap-1 text-emerald-600 font-bold transition">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                <span class="text-[9px] uppercase tracking-wider font-bold">Utama</span>
+            </button>
+
+            <!-- Item Nav: Transfer -->
+            <button id="nav-transfer" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition">
+                <i data-lucide="arrow-left-right" class="w-5 h-5"></i>
+                <span class="text-[9px] uppercase tracking-wider font-bold">Transfer</span>
+            </button>
+
+            <!-- Item Nav: Topup -->
+            <button id="nav-topup" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition">
+                <i data-lucide="smile" class="w-5 h-5"></i>
+                <span class="text-[9px] uppercase tracking-wider font-bold">Top Up</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- AUDIO SYNTHESIS ENGINE -->
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    osc.frequency.setValueAtTime(650, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.08);
+                } else if (type === 'success') {
+                    osc.frequency.setValueAtTime(523, audioCtx.currentTime); 
+                    osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1); 
+                    osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2); 
+                    osc.frequency.setValueAtTime(1046, audioCtx.currentTime + 0.3); 
+                    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.55);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.55);
+                } else if (type === 'scan') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(80, audioCtx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(950, audioCtx.currentTime + 0.35);
+                    gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.35);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                }
+            } catch (err) {
+                console.log("Audio API blocked on client context:", err);
+            }
+        }
+    </script>
+
+    <!-- CORE BANKING PROGRAM & INTEGRASI GEMINI CLIENT -->
+    <script>
+        // --- API Key Terintegrasi secara Otomatis ---
+        const apiKey = ""; // Disuplai otomatis oleh runtime environment pada runtime
+
+        // Call Gemini 2.5 Flash API with exponential backoff
+        async function callGemini(prompt, systemInstruction = "", isJSON = false) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }]
+            };
+            if (systemInstruction) {
+                payload.systemInstruction = { parts: [{ text: systemInstruction }] };
+            }
+            if (isJSON) {
+                payload.generationConfig = {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            recipientName: { type: "STRING" },
+                            verified: { type: "BOOLEAN" },
+                            bankCode: { type: "STRING" },
+                            message: { type: "STRING" }
+                        },
+                        required: ["recipientName", "verified", "bankCode", "message"]
+                    }
+                };
+            }
+
+            let retries = 5;
+            let delay = 1000;
+            while (retries > 0) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error("API Connection Error: " + response.status);
+                    
+                    const result = await response.json();
+                    return result.candidates?.[0]?.content?.parts?.[0]?.text;
+                } catch (error) {
+                    retries--;
+                    if (retries === 0) throw error;
+                    await new Promise(res => setTimeout(res, delay));
+                    delay *= 2; 
+                }
+            }
+        }
+
+        // --- State Management ---
+        const state = {
+            currentUser: null,
+            balance: 1500000, 
+            vaNumber: "8891 08" + Math.floor(1000000000 + Math.random() * 9000000000), 
+            transactions: [
+                { id: "TX-20260620-10492", type: "in", title: "Reward Akun Baru", amount: 1500000, date: "20 Juni 2026, 10:00", details: "Welcome Bonus Bank MBG", destination: "Bank MBG", targetNum: "8891 0891" }
+            ],
+            currentTopupAmount: 500000,
+            isScanning: false,
+            webcamStream: null,
+            verifiedRecipient: null
+        };
+
+        // DOM Binding
+        const loginScreen = document.getElementById('login-screen');
+        const googleAuthModal = document.getElementById('google-auth-modal');
+        const authEmailStep = document.getElementById('auth-email-step');
+        const authLoadingStep = document.getElementById('auth-loading-step');
+        const appHeader = document.getElementById('app-header');
+        const mainContent = document.getElementById('main-content');
+        const bottomNav = document.getElementById('bottom-nav');
+        const transferPanel = document.getElementById('transfer-panel');
+        const topupPanel = document.getElementById('topup-panel');
+        const receiptModal = document.getElementById('receipt-modal');
+        const terminalOverlay = document.getElementById('terminal-overlay');
+        const facePlaceholder = document.getElementById('face-placeholder');
+        const scannerLaser = document.getElementById('scanner-laser');
+        const webcamVideo = document.getElementById('webcam-video');
+        const toastNotif = document.getElementById('toast-notif');
+        const toastMessage = document.getElementById('toast-message');
+
+        const userDisplayName = document.getElementById('user-display-name');
+        const userBalance = document.getElementById('user-balance');
+        const vaNumberDisplay = document.getElementById('va-number');
+        const transactionList = document.getElementById('transaction-list');
+        const authNameInput = document.getElementById('auth-name');
+        const authEmailInput = document.getElementById('auth-email');
+
+        const transferDestination = document.getElementById('transfer-destination');
+        const transferAccount = document.getElementById('transfer-account');
+        const transferAmount = document.getElementById('transfer-amount');
+        const transferNotes = document.getElementById('transfer-notes');
+        const btnVerifyAccount = document.getElementById('btn-verify-account');
+        const verificationStatus = document.getElementById('verification-status');
+        const verifiedNameText = document.getElementById('verified-name');
+
+        // Render Canvas Partikel Latar Belakang (Tema Cerah)
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let points = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initPoints();
+        }
+
+        function initPoints() {
+            points = [];
+            const count = Math.min(30, Math.floor(window.innerWidth / 40));
+            for (let i = 0; i < count; i++) {
+                points.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    radius: Math.random() * 2.5 + 1
+                });
+            }
+        }
+
+        function drawBackground() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "rgba(16, 185, 129, 0.08)";
+            ctx.fillStyle = "rgba(16, 185, 129, 0.15)";
+
+            for (let i = 0; i < points.length; i++) {
+                const p1 = points[i];
+                p1.x += p1.vx;
+                p1.y += p1.vy;
+
+                if (p1.x < 0 || p1.x > canvas.width) p1.vx *= -1;
+                if (p1.y < 0 || p1.y > canvas.height) p1.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(p1.x, p1.y, p1.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                for (let j = i + 1; j < points.length; j++) {
+                    const p2 = points[j];
+                    const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+                    if (dist < 150) {
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(drawBackground);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        drawBackground();
+
+        // Helper Format Rupiah
+        function formatRupiah(value) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(value);
+        }
+
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toastNotif.classList.remove('hidden');
+            setTimeout(() => {
+                toastNotif.classList.add('hidden');
+            }, 3000);
+        }
+
+        // --- SISTEM AUTENTIKASI GOOGLE ---
+        document.getElementById('btn-google-login').addEventListener('click', () => {
+            playSound('click');
+            googleAuthModal.classList.remove('hidden');
+            authEmailStep.classList.remove('hidden');
+            authLoadingStep.classList.add('hidden');
+        });
+
+        function closeAuthModal() {
+            playSound('click');
+            googleAuthModal.classList.add('hidden');
+        }
+
+        document.getElementById('btn-submit-auth').addEventListener('click', () => {
+            const name = authNameInput.value.trim() || "Rian Sanjaya";
+            const email = authEmailInput.value.trim() || "rian.sanjaya@gmail.com";
+
+            authEmailStep.classList.add('hidden');
+            authLoadingStep.classList.remove('hidden');
+            playSound('click');
+
+            // Simulasi sinkronisasi token dengan server google
+            setTimeout(() => {
+                state.currentUser = { name, email };
+                googleAuthModal.classList.add('hidden');
+                loginScreen.classList.add('hidden');
+
+                appHeader.classList.remove('hidden');
+                mainContent.classList.remove('hidden');
+                bottomNav.classList.remove('hidden');
+
+                userDisplayName.textContent = state.currentUser.name;
+                vaNumberDisplay.textContent = state.vaNumber;
+                updateBalanceUI();
+                renderTransactions();
+
+                playSound('success');
+                showToast(`Google Auth Sukses. Selamat Datang ${name}!`);
+            }, 1500);
+        });
+
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            playSound('click');
+            state.currentUser = null;
+            appHeader.classList.add('hidden');
+            mainContent.classList.add('hidden');
+            bottomNav.classList.add('hidden');
+            loginScreen.classList.remove('hidden');
+            showToast("Akses akun ditutup.");
+        });
+
+        function updateBalanceUI() {
+            userBalance.textContent = formatRupiah(state.balance);
+        }
+
+        // --- LOG HISTORI TRANSAKSI ---
+        function renderTransactions(filterText = "") {
+            const filtered = state.transactions.filter(tx => 
+                tx.title.toLowerCase().includes(filterText.toLowerCase()) || 
+                tx.destination.toLowerCase().includes(filterText.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                transactionList.innerHTML = `
+                    <div class="text-center py-10 text-slate-400 text-xs uppercase tracking-wider font-extrabold">
+                        Tidak ada transaksi ditemukan
+                    </div>
+                `;
+                return;
+            }
+
+            transactionList.innerHTML = filtered.map(tx => {
+                const isIncoming = tx.type === 'in';
+                const sign = isIncoming ? '+' : '-';
+                const amountClass = isIncoming ? 'text-emerald-600' : 'text-rose-600';
+                const iconBg = isIncoming ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600';
+                const iconName = isIncoming ? 'arrow-down-left' : 'arrow-up-right';
+
+                return `
+                    <div class="bg-white border border-slate-100 p-3.5 rounded-2xl flex items-center justify-between hover:border-slate-200 transition duration-200 cursor-pointer shadow-[0_4px_12px_rgba(0,0,0,0.01)]" onclick="showExistingReceipt('${tx.id}')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl ${iconBg} flex items-center justify-center">
+                                <i data-lucide="${iconName}" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-800">${tx.title}</h4>
+                                <p class="text-[10px] text-slate-400 mt-0.5">${tx.date}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-extrabold ${amountClass}">${sign} ${formatRupiah(tx.amount)}</span>
+                            <span class="text-[8px] font-mono-code text-slate-400 block uppercase tracking-wide mt-0.5">${tx.destination}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        document.getElementById('tx-search').addEventListener('input', (e) => {
+            renderTransactions(e.target.value);
+        });
+
+        function copyVA() {
+            const cleanVa = state.vaNumber.replace(/\s/g, '');
+            const dummyInput = document.createElement("input");
+            document.body.appendChild(dummyInput);
+            dummyInput.value = cleanVa;
+            dummyInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummyInput);
+            playSound('click');
+            showToast("Nomor VA disalin!");
+        }
+
+        // --- NAVIGASI ANTAR LAYAR ---
+        function switchScreen(target) {
+            playSound('click');
+            mainContent.classList.add('hidden');
+            transferPanel.classList.add('hidden');
+            topupPanel.classList.add('hidden');
+
+            document.getElementById('nav-home').className = "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition";
+            document.getElementById('nav-transfer').className = "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition";
+            document.getElementById('nav-topup').className = "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition";
+
+            if (target === 'home') {
+                mainContent.classList.remove('hidden');
+                document.getElementById('nav-home').className = "flex flex-col items-center gap-1 text-emerald-600 font-bold transition";
+            } else if (target === 'transfer') {
+                transferPanel.classList.remove('hidden');
+                document.getElementById('nav-transfer').className = "flex flex-col items-center gap-1 text-emerald-600 font-bold transition";
+                resetTransferGateway();
+            } else if (target === 'topup') {
+                topupPanel.classList.remove('hidden');
+                document.getElementById('nav-topup').className = "flex flex-col items-center gap-1 text-emerald-600 font-bold transition";
+                initCameraFeed();
+            }
+        }
+
+        // --- SISTEM VALIDASI CEK REKENING AI GEMINI ---
+        btnVerifyAccount.addEventListener('click', async () => {
+            const destination = transferDestination.value;
+            const accountNumber = transferAccount.value.trim();
+
+            if (!accountNumber) {
+                playSound('error');
+                showToast("Tulis nomor rekening tujuan!");
+                return;
+            }
+
+            btnVerifyAccount.disabled = true;
+            btnVerifyAccount.textContent = "Mencari...";
+            playSound('scan');
+
+            try {
+                const sysInstruction = "Anda adalah API backend kliring perbankan nasional Indonesia. Tugas Anda mencari nama pemilik rekening dengan data input. Berikan output JSON murni.";
+                const prompt = `Carikan nama pemilik rekening bank/e-wallet asli Indonesia berdasarkan detail berikut:
+                Provider/Bank: ${destination}
+                Nomor: ${accountNumber}
+                Silakan buat nama Indonesia yang terdengar realistis dan profesional (Misalnya jika e-wallet: "BUDI SANTOSO", jika sesama Bank MBG: "HERI SUSANTO"). Nama harus konsisten dengan nomor yang diinput.`;
+
+                const responseText = await callGemini(prompt, sysInstruction, true);
+                const apiResult = JSON.parse(responseText);
+
+                if (apiResult && apiResult.recipientName) {
+                    state.verifiedRecipient = {
+                        name: apiResult.recipientName,
+                        account: accountNumber,
+                        provider: destination
+                    };
+
+                    verifiedNameText.textContent = `PENERIMA TERVERIFIKASI: ${apiResult.recipientName} (${apiResult.message})`;
+                    verificationStatus.classList.remove('hidden');
+                    playSound('success');
+                } else {
+                    throw new Error("Invalid payload mapping");
+                }
+            } catch (err) {
+                console.error("AI Lookup failed, beralih ke validasi manual:", err);
+                const fallbackName = "Penerima Terdaftar MBG-" + accountNumber.substring(Math.max(0, accountNumber.length - 4));
+                state.verifiedRecipient = {
+                    name: fallbackName,
+                    account: accountNumber,
+                    provider: destination
+                };
+                verifiedNameText.textContent = `PENERIMA SAH: ${fallbackName} (VERIFIKASI MANUAL)`;
+                verificationStatus.classList.remove('hidden');
+            } finally {
+                btnVerifyAccount.disabled = false;
+                btnVerifyAccount.textContent = "Cek Akun";
+            }
+        });
+
+        transferDestination.addEventListener('change', (e) => {
+            const isWallet = ["GoPay", "OVO", "DANA", "LinkAja", "ShopeePay"].includes(e.target.value);
+            document.getElementById('label-account-number').textContent = isWallet ? "Nomor Handphone E-Wallet" : "Nomor Rekening Tujuan";
+            resetVerificationState();
+        });
+
+        transferAccount.addEventListener('input', resetVerificationState);
+
+        function resetVerificationState() {
+            state.verifiedRecipient = null;
+            verificationStatus.classList.add('hidden');
+        }
+
+        function setTransferAmount(amt) {
+            playSound('click');
+            transferAmount.value = amt;
+        }
+
+        function resetTransferGateway() {
+            transferAccount.value = "";
+            transferAmount.value = "";
+            transferNotes.value = "";
+            resetVerificationState();
+        }
+
+        // Proses Eksekusi Transfer
+        document.getElementById('btn-process-transfer').addEventListener('click', () => {
+            const amountVal = parseFloat(transferAmount.value);
+            const notes = transferNotes.value.trim() || "Transfer Realtime BI-FAST";
+
+            if (!state.verifiedRecipient) {
+                playSound('error');
+                showToast("Lakukan 'Cek Akun' terlebih dahulu!");
+                return;
+            }
+            if (isNaN(amountVal) || amountVal <= 0) {
+                playSound('error');
+                showToast("Jumlah nominal transfer tidak valid.");
+                return;
+            }
+            if (amountVal > state.balance) {
+                playSound('error');
+                showToast("Saldo Anda tidak mencukupi!");
+                return;
+            }
+
+            // Kurangi Saldo
+            state.balance -= amountVal;
+
+            const newTx = {
+                id: "TX-" + Math.floor(10000000 + Math.random() * 90000000),
+                type: "out",
+                title: `Kirim ke ${state.verifiedRecipient.name}`,
+                amount: amountVal,
+                date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) + ", " + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                details: notes,
+                destination: state.verifiedRecipient.provider,
+                targetNum: state.verifiedRecipient.account
+            };
+
+            state.transactions.unshift(newTx);
+            updateBalanceUI();
+            renderTransactions();
+
+            playSound('success');
+            switchScreen('home');
+            showReceipt(newTx);
+            showToast("Dana sukses ditransfer!");
+        });
+
+        // --- INTEGRASI WEBCAM & DETEKSI SENYUMAN ---
+        function initCameraFeed() {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+                    .then(stream => {
+                        state.webcamStream = stream;
+                        webcamVideo.srcObject = stream;
+                        webcamVideo.play();
+                        webcamVideo.classList.remove('hidden');
+                        facePlaceholder.classList.add('opacity-0');
+                        document.getElementById('camera-status-text').textContent = "KAMERA BIOMETRIK AKTIF";
+                    })
+                    .catch(() => {
+                        fallbackToCameraSimulation();
+                    });
+            } else {
+                fallbackToCameraSimulation();
+            }
+        }
+
+        function fallbackToCameraSimulation() {
+            webcamVideo.classList.add('hidden');
+            facePlaceholder.classList.remove('opacity-0');
+            document.getElementById('camera-status-text').textContent = "BIOMETRIC SIMULATOR ACTIVE";
+        }
+
+        const nominalBtns = document.querySelectorAll('.btn-nominal');
+        nominalBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                nominalBtns.forEach(b => b.className = "btn-nominal p-2.5 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-bold active:scale-95 transition");
+                btn.className = "btn-nominal p-2.5 bg-slate-50 border border-emerald-500/40 text-emerald-700 bg-emerald-50 rounded-xl text-xs font-bold active:scale-95 transition";
+                state.currentTopupAmount = parseInt(btn.getAttribute('data-amount'));
+                playSound('click');
+            });
+        });
+
+        // Eksekusi Pindai Senyum Koding
+        document.getElementById('btn-start-scan').addEventListener('click', () => {
+            if (state.isScanning) return;
+            state.isScanning = true;
+            playSound('click');
+
+            scannerLaser.classList.remove('hidden');
+            terminalOverlay.classList.remove('hidden');
+            terminalOverlay.innerHTML = "";
+
+            const logs = [
+                "BOOTSTRAP: Mempersiapkan AI Biometric Capture Layer v2.5...",
+                "HARDWARE: Membuka enkripsi saluran input video lensa...",
+                "ANALYZING: Memetakan 128 titik nodal biometrik wajah...",
+                "MATH_EQUATION: Menghitung jarak Euclidean $d = \\sqrt{(x_2-x_1)^2 + (y_2-y_1)^2}$",
+                "EYE_TRACKING: Mendeteksi pupil & keaslian pandangan mata...",
+                "WARNING: Derajat senyuman hanya 20% (Ayo tunjukkan senyum terbaik Anda!)...",
+                "OPTIMIZING: Melakukan normalisasi filter noise sekitar...",
+                "SUCCESS: Senyuman lebar terdeteksi! Kategori: Genuine Happiness.",
+                "API_LEDGER: Menghubungkan jalur kliring data Bank MBG...",
+                `DB_LEDGER: UPDATE ledger SET balance = balance + ${state.currentTopupAmount} WHERE account = "${state.currentUser ? state.currentUser.email : 'guest'}"`,
+                "NETWORK: Menyiarkan transaksi baru ke kliring nasional...",
+                "STATUS: BI-FAST kliring berhasil diselesaikan. Kode respons: 200 OK."
+            ];
+
+            let logIndex = 0;
+            function runLogSequence() {
+                if (logIndex < logs.length) {
+                    const line = document.createElement('div');
+                    line.className = "py-0.5 tracking-wide leading-relaxed";
+                    line.innerHTML = `<span class="text-slate-500">[${new Date().toLocaleTimeString()}]</span> <span class="text-emerald-400">${logs[logIndex]}</span>`;
+                    terminalOverlay.appendChild(line);
+                    terminalOverlay.scrollTop = terminalOverlay.scrollHeight;
+
+                    playSound('scan');
+                    logIndex++;
+                    setTimeout(runLogSequence, 120 + Math.random() * 180);
+                } else {
+                    setTimeout(triggerSuccessTopup, 800);
+                }
+            }
+            runLogSequence();
+        });
+
+        function triggerSuccessTopup() {
+            state.isScanning = false;
+            scannerLaser.classList.add('hidden');
+            terminalOverlay.classList.add('hidden');
+
+            state.balance += state.currentTopupAmount;
+
+            const newTx = {
+                id: "TX-" + Math.floor(10000000 + Math.random() * 90000000),
+                type: "in",
+                title: "Deposit Senyuman Sukses",
+                amount: state.currentTopupAmount,
+                date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) + ", " + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                details: "Top Up Gratis via AI Biometric Scanner",
+                destination: "Bank MBG",
+                targetNum: state.vaNumber
+            };
+
+            state.transactions.unshift(newTx);
+            updateBalanceUI();
+            renderTransactions();
+
+            if (state.webcamStream) {
+                state.webcamStream.getTracks().forEach(track => track.stop());
+                state.webcamStream = null;
+            }
+
+            switchScreen('home');
+            playSound('success');
+            showReceipt(newTx);
+            showToast("Deposit saldo diproses!");
+        }
+
+        // --- STRUK STRIP BUKTI TRANSFER ---
+        function showReceipt(tx) {
+            document.getElementById('receipt-tx-id').textContent = tx.id;
+            document.getElementById('receipt-datetime').textContent = tx.date;
+            document.getElementById('receipt-source').textContent = state.vaNumber;
+            document.getElementById('receipt-sender-name').textContent = state.currentUser ? state.currentUser.name : "Rian Sanjaya";
+            document.getElementById('receipt-dest-bank').textContent = tx.destination;
+            document.getElementById('receipt-dest-number').textContent = tx.targetNum;
+            document.getElementById('receipt-notes').textContent = tx.details;
+            document.getElementById('receipt-amount').textContent = formatRupiah(tx.amount);
+
+            receiptModal.classList.remove('hidden');
+        }
+
+        function showExistingReceipt(txId) {
+            const tx = state.transactions.find(t => t.id === txId);
+            if (tx) showReceipt(tx);
+        }
+
+        document.getElementById('btn-close-receipt').addEventListener('click', () => {
+            playSound('click');
+            receiptModal.classList.add('hidden');
+        });
+
+        document.getElementById('btn-share-receipt').addEventListener('click', () => {
+            playSound('click');
+            showToast("Struk disalin!");
+
+            const shareText = `*BANK MBG - STRUK RESMI BI-FAST*\nReferensi: ${document.getElementById('receipt-tx-id').textContent}\nTanggal: ${document.getElementById('receipt-datetime').textContent}\nTujuan: ${document.getElementById('receipt-dest-bank').textContent} (${document.getElementById('receipt-dest-number').textContent})\nNominal: ${document.getElementById('receipt-amount').textContent}\n\n*Status Transaksi: SUKSES DIKLIRING*`;
+            
+            const textarea = document.createElement("textarea");
+            document.body.appendChild(textarea);
+            textarea.value = shareText;
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+        });
+
+        // --- CHAT COPILOT FINANCIAL AI ---
+        const btnToggleAI = document.getElementById('btn-toggle-ai');
+        const aiChatPanel = document.getElementById('ai-chat-panel');
+        const aiChatHistory = document.getElementById('ai-chat-history');
+        const aiUserInput = document.getElementById('ai-user-input');
+        const btnSendChat = document.getElementById('btn-send-chat');
+
+        btnToggleAI.addEventListener('click', () => {
+            playSound('click');
+            aiChatPanel.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-close-ai').addEventListener('click', () => {
+            playSound('click');
+            aiChatPanel.classList.add('hidden');
+        });
+
+        async function askAI(messageText = "") {
+            const text = messageText || aiUserInput.value.trim();
+            if (!text) return;
+
+            aiUserInput.value = "";
+            appendChatMessage("user", text);
+            playSound('click');
+
+            aiChatHistory.scrollTop = aiChatHistory.scrollHeight;
+
+            const loaderId = appendChatMessage("ai-loader", "AI sedang menganalisis...");
+
+            try {
+                const sysPrompt = `Anda adalah "Asisten Finansial AI MBG", asisten virtual pintar Bank MBG (Bank Mandiri Bangun Generasi) milik ${state.currentUser ? state.currentUser.name : 'Rian Sanjaya'}.
+                Detail Rekening Nasabah:
+                - Virtual Account: ${state.vaNumber}
+                - Saldo saat ini: ${formatRupiah(state.balance)}
+                - Riwayat Transaksi: ${JSON.stringify(state.transactions)}
+                Berikan respon konsultatif, sangat ramah, dan profesional dalam Bahasa Indonesia yang singkat, padat, dan instruktif.`;
+
+                const aiResponse = await callGemini(text, sysPrompt, false);
+                
+                document.getElementById(loaderId).remove();
+                appendChatMessage("ai", aiResponse);
+            } catch (err) {
+                console.error("Chat API error:", err);
+                document.getElementById(loaderId).remove();
+                appendChatMessage("ai", "Maaf, sistem AI MBG sedang sibuk. Silakan ajukan pertanyaan beberapa saat lagi.");
+            }
+
+            aiChatHistory.scrollTop = aiChatHistory.scrollHeight;
+        }
+
+        btnSendChat.addEventListener('click', () => askAI());
+        aiUserInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') askAI();
+        });
+
+        function appendChatMessage(sender, text) {
+            const container = document.createElement('div');
+            const uniqueId = "msg-" + Math.random().toString(36).substr(2, 9);
+            container.id = uniqueId;
+
+            if (sender === "user") {
+                container.className = "bg-emerald-50 border border-emerald-100 rounded-2xl p-3 max-w-[85%] self-end ml-auto space-y-1 shadow-sm";
+                container.innerHTML = `<p class="text-slate-800">${text}</p><span class="text-[8px] text-emerald-600 block text-right font-bold">Anda</span>`;
+            } else if (sender === "ai") {
+                const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                container.className = "bg-white border border-slate-100 rounded-2xl p-3 max-w-[85%] self-start space-y-1 shadow-sm";
+                container.innerHTML = `<p class="text-slate-700">${formatted}</p><span class="text-[8px] text-cyan-600 block text-right font-bold">AI Assistant</span>`;
+            } else {
+                container.className = "bg-white border border-dashed border-slate-200 rounded-2xl p-3 max-w-[85%] self-start flex items-center gap-2";
+                container.innerHTML = `<div class="w-3.5 h-3.5 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div><p class="text-slate-400 text-[11px] font-semibold">${text}</p>`;
+            }
+
+            aiChatHistory.appendChild(container);
+            return uniqueId;
+        }
+
+        // --- ROUTING EVENT LISTENERS ---
+        document.getElementById('action-transfer').addEventListener('click', () => switchScreen('transfer'));
+        document.getElementById('action-topup').addEventListener('click', () => switchScreen('topup'));
+        
+        document.getElementById('nav-home').addEventListener('click', () => switchScreen('home'));
+        document.getElementById('nav-transfer').addEventListener('click', () => switchScreen('transfer'));
+        document.getElementById('nav-topup').addEventListener('click', () => switchScreen('topup'));
+
+        document.getElementById('btn-back-transfer').addEventListener('click', () => switchScreen('home'));
+        document.getElementById('btn-back-topup').addEventListener('click', () => {
+            if (state.webcamStream) {
+                state.webcamStream.getTracks().forEach(track => track.stop());
+                state.webcamStream = null;
+            }
+            switchScreen('home');
+        });
+
+        // Mulai Ikon Lucide
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+
+```
